@@ -29,23 +29,46 @@ function App() {
     fetchedData();
   }, []);
 
-  console.log("todos", todos);
-  console.log("isLoading", isLoading);
-  console.log("isError", isError);
-
   if (isError) return <div>Error</div>;
 
   if (isLoading) return <div>Loading...</div>;
+
+  const handleDelete = async (id: number) => {
+    try {
+      const isDeleted = await fetch(
+        `https://jsonplaceholder.typicode.com/todos/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (isDeleted.ok) {
+        setTodos(todos.filter((i) => i.id !== id));
+      }
+    } catch (error) {
+      console.log("delete fail", error);
+    }
+  };
 
   return (
     <div style={{ margin: "auto", maxWidth: "700px", textAlign: "center" }}>
       <h1>Todo List</h1>
       {todos.map((todo) => (
-        <div style={{ textAlign: "start" }}>
-          <label>
-            <input type="checkbox" />
-            {todo.title}
-          </label>
+        <div
+          key={todo.id}
+          style={{ display: "flex", justifyContent: "space-between" }}
+        >
+          <div style={{ textAlign: "start" }}>
+            <label>
+              <input type="checkbox" checked={todo.completed} />
+              {todo.title}
+            </label>
+          </div>
+          <button
+            onClick={() => handleDelete(todo.id)}
+            style={{ cursor: "pointer" }}
+          >
+            Delete
+          </button>
         </div>
       ))}
     </div>
