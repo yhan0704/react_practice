@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
-
-type Todo = {
-  id: number;
-  title: string;
-  completed: boolean;
-};
+import Todos from "./todos/Todos";
+import { Todo } from "./utils/types";
 
 function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -33,44 +29,10 @@ function App() {
 
   if (isLoading) return <div>Loading...</div>;
 
-  const handleDelete = async (id: number) => {
-    try {
-      const isDeleted = await fetch(
-        `https://jsonplaceholder.typicode.com/todos/${id}`,
-        {
-          method: "DELETE",
-        }
-      );
-      if (isDeleted.ok) {
-        setTodos(todos.filter((i) => i.id !== id));
-      }
-    } catch (error) {
-      console.log("delete fail", error);
-    }
-  };
-
   return (
     <div style={{ margin: "auto", maxWidth: "700px", textAlign: "center" }}>
       <h1>Todo List</h1>
-      {todos.map((todo) => (
-        <div
-          key={todo.id}
-          style={{ display: "flex", justifyContent: "space-between" }}
-        >
-          <div style={{ textAlign: "start" }}>
-            <label>
-              <input type="checkbox" checked={todo.completed} />
-              {todo.title}
-            </label>
-          </div>
-          <button
-            onClick={() => handleDelete(todo.id)}
-            style={{ cursor: "pointer" }}
-          >
-            Delete
-          </button>
-        </div>
-      ))}
+      <Todos todos={todos} setTodos={setTodos} />
     </div>
   );
 }
